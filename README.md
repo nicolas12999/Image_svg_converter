@@ -1,1 +1,0 @@
-# Image_svg_converter
