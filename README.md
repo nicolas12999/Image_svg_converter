@@ -1,20 +1,21 @@
 # image_svg_converter
 
-Convierte imágenes PNG/JPG a SVG con alta fidelidad de color.
+Converts PNG/JPG images to SVG with high color fidelity.
 
-Motor: **vtracer** — vectorización nativa multi-color con jerarquía de capas propia.  
-Pipeline de color: corrección de perfil ICC → mejoras opcionales → RGBA → vtracer.
+Engine: **vtracer** — native multi-color vectorization with its own layer hierarchy.
+
+Color pipeline: ICC profile correction → optional enhancements → RGBA → vtracer.
 
 ---
 
-## Requisitos
+## Requirements
 
 - Python 3.11+
-- pip (para instalar dependencias)
+- pip (to install dependencies)
 
 ---
 
-## Instalación
+## Installation
 
 ```bash
 python3 -m venv .venv
@@ -23,110 +24,137 @@ python3 -m venv .venv
 
 ---
 
-## Interfaz gráfica (recomendada)
+## Graphical Interface (recommended)
 
 ```bash
 .venv/bin/python main.py
 ```
 
-Características:
-- Drag & drop de imágenes
-- Preview lado a lado: original vs SVG
-- Zoom independiente
-- Presets: Foto, Logo, Ilustración, Alta calidad, Borrador, B&N
-- Sliders de vectorización y mejora de imagen
-- Exportar SVG con un clic
-- **Idioma:** Español / English / 中文 (cambia en tiempo real, botón ⚙)
-- **Tema:** Oscuro (Catppuccin Mocha) / Claro (Catppuccin Latte)
+Features:
+- Drag & drop of images
+- Side-by-side preview: original vs. SVG
+- Independent zoom
+- Presets: Photo, Logo, Illustration, High Quality, Draft, B&W
+- Sliders for vectorization and image enhancement
+- One-click SVG export
+- **Language:** Spanish / English / Chinese (changes in real time, button ⚙)
+- **Theme:** Dark (Catppuccin Mocha) / Light (Catppuccin Latte)
 
 ---
 
 ## CLI
 
 ```bash
-# Archivo único
-.venv/bin/python convert.py imagen.png
+# Single file
+.venv/bin/python convert.py image.png
 
-# Varios archivos
-.venv/bin/python convert.py foto.jpg logo.png -o salida/
+# Multiple files
+.venv/bin/python convert.py photo.jpg logo.png -o output/
 
-# Directorio completo con preset
-.venv/bin/python convert.py imagenes/ -o vectores/ --preset "Alta calidad"
+# Full directory with preset
+.venv/bin/python convert.py images/ -o vectors/ --preset "High quality"
 
-# Control manual
-.venv/bin/python convert.py foto.jpg \
-  --color-precision 7 \
-  --layer-difference 8 \
-  --contrast 1.1 \
-  --saturation 1.15
+# Manual control
+.venv/bin/python convert.py photo.jpg \
+--color-precision 7 \
+--layer-difference 8 \
+--contrast 1.1 \
+--saturation 1.15
 ```
 
-### Opciones CLI
+### CLI Options
 
-| Flag | Defecto | Descripción |
+| Flag | Default | Description |
+
 |------|---------|-------------|
-| `-o, --output DIR` | directorio origen | Directorio de salida |
-| `--preset NOMBRE` | — | Preset predefinido (anula parámetros individuales) |
-| `--colormode` | `color` | `color` o `binary` |
-| `--hierarchical` | `stacked` | `stacked` (foto) o `cutout` (logo) |
-| `--mode` | `spline` | `spline`, `polygon`, o `none` |
-| `--color-precision 1-8` | `6` | Profundidad de color por canal |
-| `--layer-difference 0-256` | `16` | Diferencia mínima entre capas |
-| `--filter-speckle 1-32` | `4` | Elimina manchas menores de N px² |
-| `--corner-threshold 0-180` | `60` | Ángulo para detectar esquinas |
-| `--length-threshold 0-10` | `4.0` | Simplificación de curvas |
-| `--contrast 0.5-2.0` | `1.0` | Contraste pre-vectorización |
-| `--saturation 0.0-2.0` | `1.0` | Saturación pre-vectorización |
-| `--sharpness 0.5-2.0` | `1.0` | Nitidez pre-vectorización |
 
----
+`-o, --output DIR` | Source directory | Output directory |
+
+`--preset NAME` | — | Predefined preset (overrides individual parameters) |
+
+`--colormode` | `color` | `color` or `binary` |
+
+`--hierarchical` | `stacked` | `stacked` (photo) or `cutout` (logo) |
+
+`--mode` | `spline` | `spline`, `polygon`, or `none` |
+
+`--color-precision 1-8` | `6` | Color depth per channel |
+
+`--layer-difference 0-256` | `16` | Minimum difference between layers |
+
+`--filter-speckle 1-32` | `4` | Removes speckles smaller than N px² |
+
+`--corner-threshold 0-180` | `60` | Angle for detecting corners |
+
+`--length-threshold 0-10` | `4.0` | Curve Simplification |
+
+`--contrast 0.5-2.0` | `1.0` | Pre-vectorization Contrast |
+
+`--saturation 0.0-2.0` | `1.0` | Pre-vectorization Saturation |
+
+`--sharpness 0.5-2.0` | `1.0` | Pre-vectorization Sharpness |
+
+--
 
 ## Presets
 
-| Preset | Uso ideal |
+| Preset | Ideal Use |
+
 |--------|-----------|
-| **Foto** | Fotografías con gradientes y sombras |
-| **Logo** | Logotipos con colores planos |
-| **Ilustración** | Ilustraciones digitales |
-| **Alta calidad** | Máxima fidelidad, SVG más pesado |
-| **Borrador** | Conversión rápida, menor detalle |
-| **B&N** | Escala de grises / blanco y negro |
+
+**Photo** | Photographs with gradients and shadows |
+
+**Logo** | Logos with flat colors |
+
+**Illustration** | Digital illustrations |
+
+**High Quality** | Maximum fidelity, larger SVG file size |
+
+**Draft** | Fast conversion, lower detail |
+
+**B&W** | Grayscale / Black and White |
 
 ---
 
-## Por qué vtracer en lugar de potrace
+## Why vtracer instead of potrace
 
-| | potrace (antes) | vtracer (ahora) |
-|-|-----------------|-----------------|
-| Colores | 8 por defecto, cuantizado MEDIANCUT | 64–256+ capas, cuantización perceptual |
-| Bordes | Jagged (bitmap binario) | Suaves (multi-layer nativo) |
-| Sombras | Se pierden en la cuantización | Preservadas como capas de gradiente |
-| Gamma | Sin corrección | Espacio de color interno correcto |
-| ICC profiles | No aplicado | Aplicado antes de vectorizar |
+| | potrace (before) | vtracer (now) |
+
+-|-----------------|-----------------|
+
+| Colors | 8 by default, quantized MEDIANCUT | 64–256+ layers, perceptual quantization |
+
+| Edges | Jagged (binary bitmap) | Smooth (native multi-layer) |
+
+| Shadows | Lost in quantization | Preserved as gradient layers |
+
+| Gamma | No correction | Correct internal color space |
+
+| ICC profiles | Not applied | Applied before vectorizing |
 
 ---
 
-## Arquitectura
+## Architecture
 
 ```
 image_svg_converter/
-├── main.py              ← lanzador GUI
-├── convert.py           ← CLI
+├── main.py ← GUI launcher
+├── convert.py ← CLI
 ├── app/
-│   ├── core/
-│   │   ├── settings.py  ← ConversionSettings dataclass
-│   │   ├── presets.py   ← presets predefinidos
-│   │   └── converter.py ← motor de conversión
-│   ├── image/
-│   │   └── processor.py ← ICC + enhancement
-│   ├── ui/
-│   │   ├── styles.py
-│   │   ├── drop_zone.py
-│   │   ├── controls_panel.py
-│   │   ├── preview_panel.py
-│   │   └── main_window.py
-│   └── utils/
-│       └── logger.py
+│ ├── core/
+│ │ ├── settings.py ← ConversionSettings dataclass
+│ │ ├── presets.py ← predefined presets
+│ │ └── converter.py ← conversion engine
+│ ├── image/
+│ │ └── processor.py ← ICC + enhancement
+│ ├── ui/
+│ │ ├── styles.py
+│ │ ├── drop_zone.py
+│ │ ├── controls_panel.py
+│ │ ├── preview_panel.py
+│ │ └── main_window.py
+│ └── utils/
+│ └── logger.py
 ├── requirements.txt
 └── README.md
 ```
